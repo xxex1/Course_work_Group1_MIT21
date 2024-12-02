@@ -1,0 +1,12 @@
+{
+  "name": "course_work_group1_mit21",
+  "version": "1.0.0",
+  "description": "Course work\r There are 6 people in the group: Дмитро Щербань, В'ячеслав Богдан, Дар'я Гульчак, Анастасія Сластнікова, Бердик Максим, Скаб сергій\r Team leader - Дмитро Щербань\r 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
