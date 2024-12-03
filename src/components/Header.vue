@@ -2,7 +2,10 @@
   <header>
     <div class="logo-container">
       <img src="../assets/logoCryptoTrade.svg">
-      CryptoTrade
+      <h1>
+        <span class="first-half">Crypto</span>
+        <span class="second-half">Trade</span>
+      </h1>
     </div>
     <nav>
       <ul>
@@ -51,5 +54,11 @@ a {
 .logo-container {
   display: flex;
   align-items: center;
+}
+.first-half {
+  color: #454545
+}
+.second-half {
+  color: #E9C71D
 }
 </style>
