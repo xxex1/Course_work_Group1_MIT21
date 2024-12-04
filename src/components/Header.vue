@@ -25,6 +25,8 @@
 header {
   display: flex;
   justify-content: space-between;
+  background-color: beige;
+  border-radius: 10px;
 }
 
 nav {
@@ -38,7 +40,7 @@ ul {
   padding: 0px;
   list-style-type: none;
   border-radius: 4px;
-  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 li {
