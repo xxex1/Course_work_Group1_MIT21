@@ -1,41 +1,115 @@
 <template>
   <div class="center-container">
-    <div>
+    <div class="text-section">
       <h1 class="title">
-        Digital finance made simple for everyone
+        Digital finance made <br />
+        <span class="highlight">simple</span> for everyone.
       </h1>
+      <div class="search-container">
+        <div class="search-bar">
+          <span class="search-icon"
+            ><img src="../assets/loupe.svg" alt="Search Icon"
+          /></span>
+          <input type="text" placeholder="Пошук..." class="search-input" />
+          <button class="search-button">Шукати</button>
+        </div>
+      </div>
     </div>
     <div class="image">
-      <img src="../assets/coins1.svg">
+      <img src="../assets/coins1.svg" alt="Crypto Coins" />
     </div>
   </div>
+  <div class="result">fasf</div>
 </template>
 
 <script setup>
-const imageSrc = '../assets/coins1.svg'; // Путь к вашему изображению
+const imageSrc = "../assets/coins1.svg";
 </script>
 
 <style scoped>
 .center-container {
   display: flex;
-  justify-content: space-between; /* Пространство между заголовком и картинкой */
-  align-items: center; /* Выравнивание по вертикали */
-  height: 100vh; /* Высота экрана */
+  justify-content: space-between;
+  height: 100vh;
 }
 .title {
+  font-size: 5rem;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  margin-top: 100px;
+}
+.highlight {
+  color: #e9c71d;
+}
+.result {
+  display: flex;
+  justify-content: space-between;
+  background-color: #333;
+}
+.search-container {
+  justify-content: left;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #333;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background-color: #666;
+}
+
+.search-input {
   flex: 1;
-  font-size: 2.5rem; /* Размер заголовка */
-  color: #333; /* Цвет текста */
+  padding: 10px 15px;
+  border: none;
+  background-color: #333;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.search-button {
+  padding: 20px 20px;
+  background-color: #e9c71d;
+  color: black;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #d1a61d;
+}
+.text-section {
+  margin-left: 129px;
 }
 .image {
   display: flex;
-  justify-content: right; /* Горизонтальное центрирование */
-  align-items: center; /* Вертикальное центрирование */
+  justify-content: flex-end;
+  align-items: center;
   height: 100vh;
 }
 img {
   max-width: 100%;
   max-height: 100%;
 }
-
 </style>

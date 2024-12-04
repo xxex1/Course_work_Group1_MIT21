@@ -25,7 +25,6 @@
 header {
   display: flex;
   justify-content: space-between;
-  background-color: beige;
   border-radius: 10px;
 }
 
