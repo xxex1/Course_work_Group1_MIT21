@@ -5,7 +5,7 @@
 
 <script setup>
 import Header from '@/components/Header.vue';
-import CentralBox from '@/components/CentralBox.vue';
+import CentralBox from '@/components/HomePageBox.vue';
 </script>
 
 <style scoped>
