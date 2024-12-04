@@ -9,10 +9,10 @@
     </div>
     <nav>
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Crypto currency</a></li>
-        <li><a href="#">Price Converter</a></li>
-        <li><a href="#">FAQ</a></li>
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/crypto-currency">Crypto currency</router-link></li>
+        <li><router-link to="/price-converter">Price Converter</router-link></li>
+        <li><router-link to="/faq">FAQ</router-link></li>
       </ul>
     </nav>
   </header>
