@@ -19,7 +19,8 @@
       <img src="../assets/coins1.svg" alt="Crypto Coins" />
     </div>
   </div>
-  <div class="overlay-container">
+  <div class="overlay-container" v-if="tableData.length > 0">
+    
     <table class="table">
       <thead>
         <tr>
@@ -27,52 +28,19 @@
           <th>Name</th>
           <th>Value</th>
           <th>Change</th>
+          <th>Trading volume</th>
+          <th>Graphic</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>Bitcoin</td>
-          <td>$40,000</td>
-          <td>+2.5%</td>
+        <tr v-for="(item, index) in tableData" :key="index">
+          <td>{{ index + 1 }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.value }}</td>
+          <td>{{ item.change }}</td>
+          <td>{{ item.trading_volume }}</td>
+          <td>{{ item.graphic }}</td>
         </tr>
-        <tr>
-          <td>2</td>
-          <td>Ethereum</td>
-          <td>$2,500</td>
-          <td>-1.2%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        
       </tbody>
     </table>
   </div>
@@ -80,6 +48,19 @@
 
 <script setup>
 const imageSrc = "../assets/coins1.svg";
+import { ref } from "vue";
+
+// Данные таблицы
+const tableData = ref([]);
+
+// Пример: Вы можете добавить данные через 3 секунды для проверки.
+setTimeout(() => {
+  tableData.value = [
+    { name: "Bitcoin", value: "$40,000", change: "+2.5%", trading_volume: "1724671", graphic: "???"},
+    { name: "Bitcoin", value: "$40,000", change: "+2.5%", trading_volume: "1724671", graphic: "???"},
+    { name: "Bitcoin", value: "$40,000", change: "+2.5%", trading_volume: "1724671", graphic: "???"},
+  ];
+}, 1000);
 </script>
 
 <style scoped>
@@ -169,13 +150,15 @@ img {
   max-height: 100%;
 }
 .overlay-container {
-  
-  margin-bottom: 400px;
+  display: flex;
+  position: absolute;
+  margin: 100px;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный фон */
+  background-color: rgba(71, 70, 70, 0.197); /* Полупрозрачный фон */
   color: white;
+  padding: 10px;
   overflow: auto; /* Скроллинг, если контент превышает высоту */
   max-height: 50vh; /* Ограничение максимальной высоты */
 }
@@ -204,5 +187,11 @@ img {
 
 .table tbody tr:nth-child(even) {
   background-color: #444;
+}
+/* Сообщение, если данных нет */
+.no-data-text {
+  font-size: 1.5rem;
+  color: #aaa;
+  margin-top: 20px;
 }
 </style>
