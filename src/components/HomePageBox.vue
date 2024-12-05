@@ -19,8 +19,62 @@
       <img src="../assets/coins1.svg" alt="Crypto Coins" />
     </div>
   </div>
-  <div class="overlay-result">
-    <p class="overlay-text">This is an overlay container!</p>
+  <div class="overlay-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Value</th>
+          <th>Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Bitcoin</td>
+          <td>$40,000</td>
+          <td>+2.5%</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Ethereum</td>
+          <td>$2,500</td>
+          <td>-1.2%</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Dogecoin</td>
+          <td>$0.25</td>
+          <td>+5.6%</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Dogecoin</td>
+          <td>$0.25</td>
+          <td>+5.6%</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Dogecoin</td>
+          <td>$0.25</td>
+          <td>+5.6%</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Dogecoin</td>
+          <td>$0.25</td>
+          <td>+5.6%</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Dogecoin</td>
+          <td>$0.25</td>
+          <td>+5.6%</td>
+        </tr>
+        
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -114,20 +168,41 @@ img {
   max-width: 100%;
   max-height: 100%;
 }
-.overlay-result {
-  position: absolute; /* Абсолютное позиционирование */
-  bottom: 0; /* Расположение внизу */
+.overlay-container {
+  
+  margin-bottom: 400px;
+  bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон */
+  background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный фон */
   color: white;
-  padding: 20px;
-  text-align: center;
-  z-index: 10; /* Высокий уровень слоя для перекрытия */
+  overflow: auto; /* Скроллинг, если контент превышает высоту */
+  max-height: 50vh; /* Ограничение максимальной высоты */
 }
 
-.overlay-text {
-  font-size: 1.5rem;
-  margin: 0;
+/* Таблица */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #444; /* Границы ячеек */
+}
+
+.table th {
+  background-color: #555; /* Фон для заголовков таблицы */
+}
+
+.table tbody tr:nth-child(odd) {
+  background-color: #333; /* Чередование строк таблицы */
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #444;
 }
 </style>
