@@ -19,7 +19,9 @@
       <img src="../assets/coins1.svg" alt="Crypto Coins" />
     </div>
   </div>
-  <div class="result">fasf</div>
+  <div class="overlay-result">
+    <p class="overlay-text">This is an overlay container!</p>
+  </div>
 </template>
 
 <script setup>
@@ -111,5 +113,21 @@ const imageSrc = "../assets/coins1.svg";
 img {
   max-width: 100%;
   max-height: 100%;
+}
+.overlay-result {
+  position: absolute; /* Абсолютное позиционирование */
+  bottom: 0; /* Расположение внизу */
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон */
+  color: white;
+  padding: 20px;
+  text-align: center;
+  z-index: 10; /* Высокий уровень слоя для перекрытия */
+}
+
+.overlay-text {
+  font-size: 1.5rem;
+  margin: 0;
 }
 </style>
