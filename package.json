@@ -16,7 +16,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "sass": "^1.81.1",
     "sass-embedded": "^1.81.1",
-    "vite": "^6.0.1",
+    "vite": "^6.0.2",
     "vite-plugin-vue-devtools": "^7.6.5"
   },
   "description": "This project was done by Дар'я Гульчак, Максим Бердик, Анастасія Сластнікова, Вячеслав Богдан, Скаб Сергій, Дмитро Щербань. Дмитро Щербань - team leader",
