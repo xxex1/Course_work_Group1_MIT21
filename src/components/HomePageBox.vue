@@ -8,7 +8,7 @@
       <div class="search-container">
         <div class="search-bar">
           <span class="search-icon"
-            ><img src="../assets/loupe.svg" alt="Search Icon"
+            ><img src="../assets/search_icon.svg" alt="Search Icon"
           /></span>
           <input type="text" placeholder="Пошук..." class="search-input" />
           <button class="search-button">Шукати</button>
