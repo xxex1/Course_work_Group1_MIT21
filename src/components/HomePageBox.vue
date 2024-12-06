@@ -6,21 +6,25 @@
         <span class="highlight">simple</span> for everyone.
       </h1>
       <div class="search-container">
-        <div class="search-bar">
-          <span class="search-icon"
-            ><img src="../assets/search_icon.svg" alt="Search Icon"
-          /></span>
-          <input type="text" placeholder="Пошук..." class="search-input" />
-          <button class="search-button">Шукати</button>
-        </div>
+      <div class="search-bar">
+        <span class="search-icon">
+          <img src="../assets/search_icon.svg" alt="Search Icon" />
+        </span>
+        <input
+          type="text"
+          placeholder="Пошук..."
+          class="search-input"
+          v-model="searchQuery"
+        />
+        <button class="search-button" @click="handleSearch">Шукати</button>
       </div>
+    </div>
     </div>
     <div class="image">
       <img src="../assets/coins1.svg" alt="Crypto Coins" />
     </div>
   </div>
   <div class="overlay-container" v-if="tableData.length > 0">
-    
     <table class="table">
       <thead>
         <tr>
@@ -28,39 +32,58 @@
           <th>Name</th>
           <th>Value</th>
           <th>Change</th>
-          <th>Trading volume</th>
-          <th>Graphic</th>
+          <th>Trading Volume</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in tableData" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.value }}</td>
-          <td>{{ item.change }}</td>
-          <td>{{ item.trading_volume }}</td>
-          <td>{{ item.graphic }}</td>
-        </tr>
-      </tbody>
+          <tr v-for="(item, index) in tableData" :key="index">
+            <td>{{ index + 1 }}</td>
+            <td>{{ item.name }}</td>
+            <td>${{ item.value }}</td>
+            <td :class="{ positive: item.change >= 0, negative: item.change < 0 }">
+              {{ item.change }}%
+            </td>
+            <td>${{ item.trading_volume }}</td>
+          </tr>
+        </tbody>
     </table>
   </div>
 </template>
 
 <script setup>
-const imageSrc = "../assets/coins1.svg";
 import { ref } from "vue";
+import { fetchCryptoData } from "../services/coinGeckoService";
 
-// Данные таблицы
+// Хранилища данных и строки поиска
 const tableData = ref([]);
+const searchQuery = ref("");
 
-// Пример: Вы можете добавить данные через 3 секунды для проверки.
-setTimeout(() => {
-  tableData.value = [
-    { name: "Bitcoin", value: "$40,000", change: "+2.5%", trading_volume: "1724671", graphic: "???"},
-    { name: "Bitcoin", value: "$40,000", change: "+2.5%", trading_volume: "1724671", graphic: "???"},
-    { name: "Bitcoin", value: "$40,000", change: "+2.5%", trading_volume: "1724671", graphic: "???"},
-  ];
-}, 1000);
+// Функция для обработки поиска
+const handleSearch = async () => {
+  const query = searchQuery.value.trim().toLowerCase(); // Приводим строку к нижнему регистру и обрезаем пробелы
+
+  if (!query) return; // Проверяем, что строка не пустая
+
+  try {
+    // Проверяем, есть ли уже криптовалюта с таким именем в таблице
+    const isDuplicate = tableData.value.some(
+      (item) => item.name.toLowerCase() === query
+    );
+
+    if (isDuplicate) {
+      alert("Эта криптовалюта уже добавлена в таблицу.");
+      return;
+    }
+
+    // Если нет дубликатов, получаем данные и добавляем их в таблицу
+    const crypto = await fetchCryptoData(query);
+    tableData.value = [...tableData.value, crypto];
+  } catch (error) {
+    console.error("Ошибка при поиске криптовалюты:", error);
+    alert("Не удалось найти указанную криптовалюту.");
+  }
+};
+
 </script>
 
 <style scoped>
@@ -189,9 +212,4 @@ img {
   background-color: #444;
 }
 /* Сообщение, если данных нет */
-.no-data-text {
-  font-size: 1.5rem;
-  color: #aaa;
-  margin-top: 20px;
-}
 </style>
