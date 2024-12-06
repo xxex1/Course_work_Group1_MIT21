@@ -3,7 +3,13 @@
     <div class="container-block">
       <div class="container-block-left">
         <h1 class="block-title">1crypt</h1>
-        <input type="text" placeholder="Введіть суму в USD..." class="block-left-search" ref="searchInput" />
+        <input
+          type="text"
+          placeholder="Введіть суму в USD..."
+          class="block-left-search"
+          ref="searchInput"
+        />
+        <button class="search-button" @click="updateConversion">Search</button> 
       </div>
       <div class="imgane">
         <img src="../assets/PriceConverter.svg" alt="Crypto Coins" />
@@ -31,7 +37,13 @@ export default {
 
     // Оновлення конвертованих значень
     const updateConversion = async () => {
-      const inputAmount = parseFloat(searchInput.value.value) || 0; // Отримуємо введене значення
+      const inputAmount = parseFloat(searchInput.value.value) || 0; // Отримуємо введене значення, з підтримкою дробових чисел
+      if (isNaN(inputAmount) || inputAmount <= 0) {
+        // Перевірка на валідність числа
+        cryptoList.value.innerHTML = "Please enter a valid number.";
+        return;
+      }
+
       const cryptoRates = await fetchCryptoRates();
 
       if (!cryptoRates) {
@@ -44,7 +56,7 @@ export default {
       // Генеруємо елементи для кожної криптовалюти
       Object.keys(cryptoRates).forEach((cryptoName) => {
         const rate = cryptoRates[cryptoName].usd;
-        const convertedValue = (inputAmount * rate).toFixed(2);
+        const convertedValue = (inputAmount * rate).toFixed(2); // Підтримка дробових значень
 
         const cryptoItem = document.createElement("li");
         cryptoItem.className = "crypto-item";
@@ -58,12 +70,10 @@ export default {
       });
     };
 
-    // Додаємо обробник подій для введення тексту
+    // Додаємо обробник подій для введення тексту (тепер тільки для кнопки)
     onMounted(() => {
-      if (searchInput.value) {
-        searchInput.value.addEventListener("input", updateConversion);
-        updateConversion(); // Викликати при першому завантаженні
-      }
+      // Викликаємо конвертацію при першому завантаженні, якщо необхідно
+      // updateConversion(); 
     });
 
     return {
@@ -75,7 +85,7 @@ export default {
 };
 </script>
 
-<style >
+<style>
 .container {
   display: flex;
   justify-content: space-around;
@@ -90,7 +100,7 @@ export default {
   width: 351px;
   height: 60px;
   background-color: #d9d9d9e5;
-  border-radius: 10px;
+  border-radius: 10px 0px 0px 10px;
   flex: 1;
   padding-left: 10px;
   border: none;
@@ -98,12 +108,31 @@ export default {
 .block-left-search:focus {
   outline: none;
 }
+
+.search-button {
+  
+  padding: 10px 20px;
+  background-color: #E9C71D;
+  color: white;
+  border: none;
+  border-radius: 0px 10px 10px 0px;
+  cursor: pointer;
+  height: 62px;
+  color: black;
+  
+}
+
+.search-button:hover {
+  background-color: #c0a315;
+  box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
 .container-block-right-cryptolist {
   width: 616px;
   height: 549px;
   background-color: #d9d9d9e5;
   border-radius: 10px;
-  overflow-y: auto; 
+  overflow-y: auto;
 }
 .crypto-list {
   list-style: none;
@@ -135,7 +164,7 @@ export default {
   font-weight: bold;
   color: #555;
 }
-.crypto-item{
+.crypto-item {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center;
@@ -144,7 +173,4 @@ export default {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
-
-
 </style>
