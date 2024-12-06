@@ -52,7 +52,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { fetchCryptoData } from "../services/coinGeckoService";
+import { fetchCryptoData, fetchCryptoListByLetter } from "../services/coinGeckoService";
 
 // Хранилища данных и строки поиска
 const tableData = ref([]);
@@ -62,28 +62,50 @@ const searchQuery = ref("");
 const handleSearch = async () => {
   const query = searchQuery.value.trim().toLowerCase(); // Приводим строку к нижнему регистру и обрезаем пробелы
 
-  if (!query) return; // Проверяем, что строка не пустая
+  if (!query) {
+    // Если поле ввода пустое, очищаем таблицу
+    tableData.value = [];
+    return;
+  }
 
   try {
-    // Проверяем, есть ли уже криптовалюта с таким именем в таблице
-    const isDuplicate = tableData.value.some(
-      (item) => item.name.toLowerCase() === query
-    );
+    if (query.length >= 1) {
+      // Если введена строка (одна или несколько букв), ищем криптовалюты по этой строке
+      const cryptoList = await fetchCryptoListByLetter(query);
 
-    if (isDuplicate) {
-      alert("Эта криптовалюта уже добавлена в таблицу.");
-      return;
+      if (cryptoList.length === 0) {
+        alert("Криптовалюты с этой строкой не найдены.");
+        return;
+      }
+
+      // Обновляем таблицу с криптовалютами
+      tableData.value = cryptoList.map((crypto) => ({
+        name: crypto.name,
+        value: "-",
+        change: "-",
+        trading_volume: "-",
+        graphic: "-", // Можно заменить на путь к заглушке изображения
+      }));
+    } else {
+      // Если введено полное название, ищем одну криптовалюту
+      const isDuplicate = tableData.value.some(
+        (item) => item.name.toLowerCase() === query
+      );
+
+      if (isDuplicate) {
+        alert("Эта криптовалюта уже добавлена в таблицу.");
+        return;
+      }
+
+      // Получаем данные криптовалюты и добавляем её в таблицу
+      const crypto = await fetchCryptoData(query);
+      tableData.value = [...tableData.value, crypto];
     }
-
-    // Если нет дубликатов, получаем данные и добавляем их в таблицу
-    const crypto = await fetchCryptoData(query);
-    tableData.value = [...tableData.value, crypto];
   } catch (error) {
     console.error("Ошибка при поиске криптовалюты:", error);
-    alert("Не удалось найти указанную криптовалюту.");
+    alert("Не удалось найти указанную криптовалюту или список.");
   }
 };
-
 </script>
 
 <style scoped>

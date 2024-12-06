@@ -37,6 +37,19 @@ export const fetchCryptoData = async (cryptoName) => {
   }
 };
 
+export const fetchCryptoListByLetter = async (query) => {
+  try {
+    const response = await apiClient.get("/coins/list");
+
+    // Фильтруем криптовалюты по введённой строке
+    return response.data.filter((crypto) =>
+      crypto.name.toLowerCase().includes(query.toLowerCase())
+    );
+  } catch (error) {
+    console.error("Ошибка при загрузке списка криптовалют:", error);
+    throw error;
+  }
+};
 
 
 // services/coinGeckoService.js
