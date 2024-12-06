@@ -20,65 +20,62 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import { onMounted, ref } from "vue";
+import { fetchCryptoRates } from "@/services/coinGeckoService"; // Імпортуємо функцію з сервісу
 
-const searchInput = ref(null);
-const cryptoList = ref(null);
+export default {
+  setup() {
+    const searchInput = ref(null);
+    const cryptoList = ref(null);
 
-// Функція для отримання даних з API
-const fetchCryptoRates = async () => {
-  try {
-    const response = await fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin&vs_currencies=usd"
-    );
-    if (!response.ok) throw new Error("Failed to fetch data");
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching crypto rates:", error);
-    return null;
-  }
+    // Оновлення конвертованих значень
+    const updateConversion = async () => {
+      const inputAmount = parseFloat(searchInput.value.value) || 0; // Отримуємо введене значення
+      const cryptoRates = await fetchCryptoRates();
+
+      if (!cryptoRates) {
+        return;
+      }
+
+      // Очищаємо список
+      cryptoList.value.innerHTML = "";
+
+      // Генеруємо елементи для кожної криптовалюти
+      Object.keys(cryptoRates).forEach((cryptoName) => {
+        const rate = cryptoRates[cryptoName].usd;
+        const convertedValue = (inputAmount * rate).toFixed(2);
+
+        const cryptoItem = document.createElement("li");
+        cryptoItem.className = "crypto-item";
+        cryptoItem.innerHTML = ` 
+          <div class="crypto-cell crypto-name">${cryptoName.toUpperCase()}</div>
+          <div class="crypto-cell crypto-price">$${rate}</div>
+          <div class="crypto-cell crypto-converted">Converted: $${convertedValue}</div>
+        `;
+
+        cryptoList.value.appendChild(cryptoItem);
+      });
+    };
+
+    // Додаємо обробник подій для введення тексту
+    onMounted(() => {
+      if (searchInput.value) {
+        searchInput.value.addEventListener("input", updateConversion);
+        updateConversion(); // Викликати при першому завантаженні
+      }
+    });
+
+    return {
+      searchInput,
+      cryptoList,
+      updateConversion,
+    };
+  },
 };
-
-// Оновлення конвертованих значень
-const updateConversion = async () => {
-  const inputAmount = parseFloat(searchInput.value.value) || 0; // Отримуємо введене значення
-  const cryptoRates = await fetchCryptoRates();
-
-  if (!cryptoRates) {
-    return;
-  }
-
-  // Очищаємо список
-  cryptoList.value.innerHTML = "";
-
-  // Генеруємо елементи для кожної криптовалюти
-  Object.keys(cryptoRates).forEach((cryptoName) => {
-    const rate = cryptoRates[cryptoName].usd;
-    const convertedValue = (inputAmount * rate).toFixed(2);
-
-    const cryptoItem = document.createElement("li");
-    cryptoItem.className = "crypto-item";
-    cryptoItem.innerHTML = ` 
-      <div class="crypto-cell crypto-name">${cryptoName.toUpperCase()}</div>
-      <div class="crypto-cell crypto-price">$${rate}</div>
-      <div class="crypto-cell crypto-converted">Converted: $${convertedValue}</div>
-    `;
-
-    cryptoList.value.appendChild(cryptoItem);
-  });
-};
-
-// Додаємо обробник подій для введення тексту
-onMounted(() => {
-  if (searchInput.value) {
-    searchInput.value.addEventListener("input", updateConversion);
-    updateConversion(); // Викликати при першому завантаженні
-  }
-});
 </script>
 
-<style scoped>
+<style >
 .container {
   display: flex;
   justify-content: space-around;
@@ -139,14 +136,15 @@ onMounted(() => {
   color: #555;
 }
 .crypto-item{
-  display: flex;
-  justify-content: space-between;
+  display: flex !important;
+  justify-content: space-between !important;
   align-items: center;
   padding: 10px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 
 
 </style>
