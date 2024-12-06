@@ -83,7 +83,7 @@
   max-width: 1200px; /* Ограничение ширины для содержимого */
   margin: 0 auto; /* Центрирование */
   padding: 20px;
-  background-color: #f5f5f5; /* Серо-белый фон */
+  background-color:  rgba(71, 70, 70, 0.197); /* Серо-белый фон */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
