@@ -6,20 +6,25 @@
         <span class="highlight">simple</span> for everyone.
       </h1>
       <div class="search-container">
-        <div class="search-bar">
-          <span class="search-icon"
-            ><img src="../assets/search_icon.svg" alt="Search Icon"
-          /></span>
-          <input type="text" placeholder="Пошук..." class="search-input" />
-          <button class="search-button">Шукати</button>
-        </div>
+      <div class="search-bar">
+        <span class="search-icon">
+          <img src="../assets/search_icon.svg" alt="Search Icon" />
+        </span>
+        <input
+          type="text"
+          placeholder="Пошук..."
+          class="search-input"
+          v-model="searchQuery"
+        />
+        <button class="search-button" @click="handleSearch">Шукати</button>
       </div>
+    </div>
     </div>
     <div class="image">
       <img src="../assets/coins1.svg" alt="Crypto Coins" />
     </div>
   </div>
-  <div class="overlay-container">
+  <div class="overlay-container" v-if="tableData.length > 0">
     <table class="table">
       <thead>
         <tr>
@@ -27,59 +32,58 @@
           <th>Name</th>
           <th>Value</th>
           <th>Change</th>
+          <th>Trading Volume</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>Bitcoin</td>
-          <td>$40,000</td>
-          <td>+2.5%</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Ethereum</td>
-          <td>$2,500</td>
-          <td>-1.2%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Dogecoin</td>
-          <td>$0.25</td>
-          <td>+5.6%</td>
-        </tr>
-        
-      </tbody>
+          <tr v-for="(item, index) in tableData" :key="index">
+            <td>{{ index + 1 }}</td>
+            <td>{{ item.name }}</td>
+            <td>${{ item.value }}</td>
+            <td :class="{ positive: item.change >= 0, negative: item.change < 0 }">
+              {{ item.change }}%
+            </td>
+            <td>${{ item.trading_volume }}</td>
+          </tr>
+        </tbody>
     </table>
   </div>
 </template>
 
 <script setup>
-const imageSrc = "../assets/coins1.svg";
+import { ref } from "vue";
+import { fetchCryptoData } from "../services/coinGeckoService";
+
+// Хранилища данных и строки поиска
+const tableData = ref([]);
+const searchQuery = ref("");
+
+// Функция для обработки поиска
+const handleSearch = async () => {
+  const query = searchQuery.value.trim().toLowerCase(); // Приводим строку к нижнему регистру и обрезаем пробелы
+
+  if (!query) return; // Проверяем, что строка не пустая
+
+  try {
+    // Проверяем, есть ли уже криптовалюта с таким именем в таблице
+    const isDuplicate = tableData.value.some(
+      (item) => item.name.toLowerCase() === query
+    );
+
+    if (isDuplicate) {
+      alert("Эта криптовалюта уже добавлена в таблицу.");
+      return;
+    }
+
+    // Если нет дубликатов, получаем данные и добавляем их в таблицу
+    const crypto = await fetchCryptoData(query);
+    tableData.value = [...tableData.value, crypto];
+  } catch (error) {
+    console.error("Ошибка при поиске криптовалюты:", error);
+    alert("Не удалось найти указанную криптовалюту.");
+  }
+};
+
 </script>
 
 <style scoped>
@@ -169,13 +173,15 @@ img {
   max-height: 100%;
 }
 .overlay-container {
-  
-  margin-bottom: 400px;
+  display: flex;
+  position: absolute;
+  margin: 100px;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный фон */
+  background-color: rgba(71, 70, 70, 0.197); /* Полупрозрачный фон */
   color: white;
+  padding: 10px;
   overflow: auto; /* Скроллинг, если контент превышает высоту */
   max-height: 50vh; /* Ограничение максимальной высоты */
 }
@@ -205,4 +211,5 @@ img {
 .table tbody tr:nth-child(even) {
   background-color: #444;
 }
+/* Сообщение, если данных нет */
 </style>
