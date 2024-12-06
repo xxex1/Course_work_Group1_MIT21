@@ -24,7 +24,8 @@
       <img src="../assets/coins1.svg" alt="Crypto Coins" />
     </div>
   </div>
-  <div class="overlay-container" v-if="tableData.length > 0">
+  <transition name="fade">
+  <div class="overlay-container" v-if="tableData.length > 0" >
     <table class="table">
       <thead>
         <tr>
@@ -48,16 +49,16 @@
         </tbody>
     </table>
   </div>
+</transition>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { fetchCryptoData, fetchCryptoListByLetter } from "../services/coinGeckoService";
+import { fetchCryptoData, fetchCryptoListByLetter, fetchCryptoDetails } from "../services/coinGeckoService";
 
 // Хранилища данных и строки поиска
 const tableData = ref([]);
 const searchQuery = ref("");
-
 // Функция для обработки поиска
 const handleSearch = async () => {
   const query = searchQuery.value.trim().toLowerCase(); // Приводим строку к нижнему регистру и обрезаем пробелы
@@ -78,14 +79,12 @@ const handleSearch = async () => {
         return;
       }
 
-      // Обновляем таблицу с криптовалютами
-      tableData.value = cryptoList.map((crypto) => ({
-        name: crypto.name,
-        value: "-",
-        change: "-",
-        trading_volume: "-",
-        graphic: "-", // Можно заменить на путь к заглушке изображения
-      }));
+      // Получаем подробную информацию для первых 10 найденных криптовалют
+      const cryptoIds = cryptoList.slice(0, 10).map((crypto) => crypto.id);
+      const detailedCryptoData = await fetchCryptoDetails(cryptoIds);
+
+      // Сортируем криптовалюты по цене (по убыванию)
+      tableData.value = detailedCryptoData.sort((a, b) => b.value - a.value);
     } else {
       // Если введено полное название, ищем одну криптовалюту
       const isDuplicate = tableData.value.some(
@@ -100,12 +99,17 @@ const handleSearch = async () => {
       // Получаем данные криптовалюты и добавляем её в таблицу
       const crypto = await fetchCryptoData(query);
       tableData.value = [...tableData.value, crypto];
+
+      // Сортируем криптовалюты по цене (по убыванию)
+      tableData.value.sort((a, b) => b.value - a.value);
     }
   } catch (error) {
     console.error("Ошибка при поиске криптовалюты:", error);
     alert("Не удалось найти указанную криптовалюту или список.");
   }
 };
+
+
 </script>
 
 <style scoped>
@@ -196,18 +200,30 @@ img {
 }
 .overlay-container {
   display: flex;
-  position: absolute;
   margin: 100px;
-  bottom: 0;
-  left: 0;
+  position: absolute;
+  top: 450px;
   right: 0;
+  left: 0;
   background-color: rgba(71, 70, 70, 0.197); /* Полупрозрачный фон */
   color: white;
   padding: 10px;
   overflow: auto; /* Скроллинг, если контент превышает высоту */
   max-height: 50vh; /* Ограничение максимальной высоты */
+  transform: translateY(10px); /* Небольшой сдвиг вниз */
 }
 
+/* Анимация появления */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
 /* Таблица */
 .table {
   width: 100%;
