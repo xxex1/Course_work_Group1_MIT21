@@ -1,116 +1,144 @@
 <template>
   <div class="container">
     <div class="container-block">
-        <div class="container-block-left">
-            <h1 class="block-title">1crypt</h1>
-            
-              <input type="text" placeholder="Пошук..." class="block-left-search" />
-            
-        </div>
-        <div class="imgane">
-            <img src="../assets/PriceConverter.svg" alt="Crypto Coins">
-        </div>
+      <div class="container-block-left">
+        <h1 class="block-title">1crypt</h1>
+        <input type="text" placeholder="Введіть суму в USD..." class="block-left-search" ref="searchInput" />
+      </div>
+      <div class="imgane">
+        <img src="../assets/PriceConverter.svg" alt="Crypto Coins" />
+      </div>
     </div>
     <div class="container-block">
-        <div class="container-block-right">
-            <h1 class="block-title">2crypts</h1>
-            <div class="container-block-right-cryptolist">
-              
-              <ul class="crypto-list">
-    <li class="crypto-item">
-      <div class="crypto-cell crypto-name">Bitcoin (BTC)</div>
-      <div class="crypto-cell crypto-price">$57,000</div>
-      <div class="crypto-cell crypto-percentage positive">+3.5%</div>
-      <div class="crypto-cell crypto-volume">Volume: $1.2B</div>
-      <div class="crypto-cell crypto-chart">
-       
-        <img src="" alt="Price Chart">
-      </div>
-    </li>
-    <li class="crypto-item">
-      <div class="crypto-cell crypto-name">Ethereum (ETH)</div>
-      <div class="crypto-cell crypto-price">$3,800</div>
-      <div class="crypto-cell crypto-percentage negative">-1.2%</div>
-      <div class="crypto-cell crypto-volume">Volume: $900M</div>
-      <div class="crypto-cell crypto-chart">
-        <img src="" alt="Price Chart">
-      </div>
-    </li>
-    
-  </ul>
-            </div>
+      <div class="container-block-right">
+        <h1 class="block-title">2crypts</h1>
+        <div class="container-block-right-cryptolist">
+          <ul class="crypto-list" ref="cryptoList"></ul>
         </div>
+      </div>
     </div>
   </div>
-  </template>
-  
-  <script setup>
-    const imageSrc = "../assets/PriceConverter.svg";
-  </script>
-  
-  <style scoped>
-    .container {
-      display: flex;
-      justify-content: space-around;
-      text-align: center;
-    }
-    .block-title {
-      color:#454545CC ;
-      line-height: 52px;
-      font-size: 40px;
-      
+</template>
 
-      
-    }
-    .block-left-search {
-      width: 351px;
-      height: 60px;
-      background-color:#D9D9D9E5 ;
-      border-radius: 10px;
-      flex: 1;
-      padding-left: 10px;
-      border: none;
-      
-    }
-    .block-left-search:focus {
-      outline: none;  
-      border: none;  
-    }
+<script setup>
+import { onMounted, ref } from "vue";
 
-    .container-block-right-cryptolist {
-      width: 616px;
-      height: 549px;
-      background-color:#D9D9D9E5 ;
-      border-radius: 10px;
-    }
+const searchInput = ref(null);
+const cryptoList = ref(null);
 
+// Функція для отримання даних з API
+const fetchCryptoRates = async () => {
+  try {
+    const response = await fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin&vs_currencies=usd"
+    );
+    if (!response.ok) throw new Error("Failed to fetch data");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching crypto rates:", error);
+    return null;
+  }
+};
 
-    .imgane {
-      width: 546px;
-      height: 610px;
-    }
+// Оновлення конвертованих значень
+const updateConversion = async () => {
+  const inputAmount = parseFloat(searchInput.value.value) || 0; // Отримуємо введене значення
+  const cryptoRates = await fetchCryptoRates();
 
-    
-.block-left {
-  width: 100%; 
-  background-color: #D9D9D9E5;
-  border-radius: 10px;
-  padding: 15px;
-  overflow-x: auto; 
+  if (!cryptoRates) {
+    return;
+  }
+
+  // Очищаємо список
+  cryptoList.value.innerHTML = "";
+
+  // Генеруємо елементи для кожної криптовалюти
+  Object.keys(cryptoRates).forEach((cryptoName) => {
+    const rate = cryptoRates[cryptoName].usd;
+    const convertedValue = (inputAmount * rate).toFixed(2);
+
+    const cryptoItem = document.createElement("li");
+    cryptoItem.className = "crypto-item";
+    cryptoItem.innerHTML = ` 
+      <div class="crypto-cell crypto-name">${cryptoName.toUpperCase()}</div>
+      <div class="crypto-cell crypto-price">$${rate}</div>
+      <div class="crypto-cell crypto-converted">Converted: $${convertedValue}</div>
+    `;
+
+    cryptoList.value.appendChild(cryptoItem);
+  });
+};
+
+// Додаємо обробник подій для введення тексту
+onMounted(() => {
+  if (searchInput.value) {
+    searchInput.value.addEventListener("input", updateConversion);
+    updateConversion(); // Викликати при першому завантаженні
+  }
+});
+</script>
+
+<style scoped>
+.container {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
 }
-
-
+.block-title {
+  color: #454545cc;
+  line-height: 52px;
+  font-size: 40px;
+}
+.block-left-search {
+  width: 351px;
+  height: 60px;
+  background-color: #d9d9d9e5;
+  border-radius: 10px;
+  flex: 1;
+  padding-left: 10px;
+  border: none;
+}
+.block-left-search:focus {
+  outline: none;
+}
+.container-block-right-cryptolist {
+  width: 616px;
+  height: 549px;
+  background-color: #d9d9d9e5;
+  border-radius: 10px;
+  overflow-y: auto; 
+}
 .crypto-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px; 
+  gap: 5px;
 }
 
-
-.crypto-item {
+.crypto-cell {
+  flex: 1;
+  text-align: center;
+  padding: 5px;
+  font-size: 14px;
+  border-right: 1px solid #ddd;
+}
+.crypto-cell:last-child {
+  border-right: none;
+}
+.crypto-name {
+  font-weight: bold;
+  text-align: left;
+}
+.crypto-price {
+  color: #333;
+}
+.crypto-converted {
+  font-weight: bold;
+  color: #555;
+}
+.crypto-item{
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -121,48 +149,4 @@
 }
 
 
-.crypto-cell {
-  flex: 1; 
-  text-align: center; 
-  padding: 5px;
-  font-size: 14px;
-  border-right: 1px solid #ddd; 
-}
-
-
-.crypto-cell:last-child {
-  border-right: none;
-}
-
-
-.crypto-name {
-  font-weight: bold;
-  text-align: left; 
-}
-
-.crypto-price {
-  color: #333;
-}
-
-.crypto-percentage.positive {
-  color: green;
-}
-
-.crypto-percentage.negative {
-  color: red;
-}
-
-.crypto-volume {
-  color: #555;
-  font-size: 13px;
-}
-
-
-.crypto-chart img {
-  width: 50px;
-  height: 30px;
-  object-fit: contain;
-}
-
-
-  </style>
+</style>
