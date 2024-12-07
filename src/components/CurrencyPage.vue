@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1>Crypto Trade</h1>
+      <h1>Currency info</h1>
     </header>
     <div class="search-bar">
       <input

@@ -2,10 +2,10 @@
   <div class="container">
     <div class="container-block">
       <div class="container-block-left">
-        <h1 class="block-title">USDT</h1>
+        <h1 class="block-title">TOKENS</h1>
         <input
           type="text"
-          placeholder="Введіть суму в USD..."
+          placeholder="Введіть кількість токенів..."
           class="block-left-search"
           ref="searchInput"
         />
