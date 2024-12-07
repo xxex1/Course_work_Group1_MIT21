@@ -159,7 +159,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 header {
   text-align: center;
   margin-bottom: 20px;
@@ -172,10 +172,13 @@ header {
   align-items: center;
   margin-bottom: 20px;
   position: relative;
-  background-color: #333; /* Темний фон пошукової панелі */
+  background-color: #333; /* Темный фон поисковой панели */
   padding: 10px;
   border-radius: 8px;
+  width: 400px; /* Устанавливаем фиксированную ширину */
+  margin: 0 auto; /* Центрируем панель */
 }
+
 
 .search-bar input {
   width: 300px;
@@ -198,6 +201,9 @@ header {
   color: #333; /* Темний текст на кнопці */
 }
 
+.search-bar button:hover {
+  background-color: #d1a61d;
+}
 .dropdown-list {
   position: absolute;
   top: 100%;

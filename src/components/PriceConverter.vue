@@ -2,7 +2,7 @@
   <div class="container">
     <div class="container-block">
       <div class="container-block-left">
-        <h1 class="block-title">1crypt</h1>
+        <h1 class="block-title">USDT</h1>
         <input
           type="text"
           placeholder="Введіть суму в USD..."
@@ -17,7 +17,7 @@
     </div>
     <div class="container-block">
       <div class="container-block-right">
-        <h1 class="block-title">2crypts</h1>
+        <h1 class="block-title">Converted</h1>
         <div class="container-block-right-cryptolist">
           <ul class="crypto-list" ref="cryptoList"></ul>
         </div>

@@ -71,7 +71,6 @@ export const fetchCryptoDetails = async (cryptoIds) => {
       change: response.data[id].usd_24h_change?.toFixed(2) || "N/A",
       trading_volume:
         response.data[id].usd_24h_vol?.toLocaleString() || "N/A",
-      graphic: `https://assets.coingecko.com/coins/images/${id}/large.png`, // Пример пути для иконки
     }));
   } catch (error) {
     console.error("Ошибка при загрузке данных о криптовалютах:", error);

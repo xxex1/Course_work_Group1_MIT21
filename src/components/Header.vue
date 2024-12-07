@@ -47,6 +47,9 @@ li {
   padding: 16px 28px;
 }
 
+li:hover {
+  background-color: #d1a61d;
+}
 a {
   text-decoration: none;
   color: black;

@@ -8,22 +8,22 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/', // Главная страница
+      path: '/', // Головна
       name: 'home',
       component: HomeView,
     },
     {
-      path: '/crypto-currency', // Страница о криптовалютах
+      path: '/crypto-currency', // Курси криптовалют
       name: 'crypto-currency',
       component: CryptoCurrencyView,
     },
     {
-      path: '/price-converter', // Конвертер цен
+      path: '/price-converter', // Конвертер цін
       name: 'price-converter',
       component: PriceConverterView,
     },
     {
-      path: '/faq', // Страница FAQ
+      path: '/faq', // Сторінка FAQ
       name: 'faq',
       component: FAQView,
     },
