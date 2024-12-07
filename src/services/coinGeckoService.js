@@ -11,7 +11,6 @@ const apiClient = axios.create({
   },
 });
 
-// Функция для получения данных о криптовалюте
 export const fetchCryptoData = async (cryptoName) => {
   try {
     const response = await apiClient.get("/simple/price", {
