@@ -79,18 +79,23 @@ export const fetchCryptoDetails = async (cryptoIds) => {
   }
 };
 
+
 // services/coinGeckoService.js
 
 // Функція для отримання даних з API
 export const fetchCryptoRates = async () => {
+  const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin,binancecoin,xrp,dogecoin,solana,cardano,polkadot,chainlink,shiba-inu,avalanche-2&vs_currencies=usd';
+  
   try {
-    const response = await fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin&vs_currencies=usd"
-    );
-    if (!response.ok) throw new Error("Failed to fetch data");
-    return await response.json();
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
+    }
+    const data = await response.json();
+    return data; // Повертаємо отримані дані
   } catch (error) {
-    console.error("Error fetching crypto rates:", error);
-    return null;
+    console.error('Error fetching crypto rates:', error);
+    throw error; // Пробросити помилку для обробки в компоненті
   }
 };
+
