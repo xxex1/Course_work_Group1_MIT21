@@ -9,36 +9,51 @@
         v-model="searchQuery"
         placeholder="Пошук криптовалюти..."
         @input="fetchCryptoList"
+        @focus="isDropdownVisible = true"
+        @blur="hideDropdown"
       />
       <button @click="fetchSelectedCrypto">Пошук</button>
-      <ul v-if="cryptoList.length" class="dropdown-list">
-        <li v-for="crypto in cryptoList" :key="crypto.id" @click="selectCrypto(crypto)">
+      <ul
+        v-if="cryptoList.length && isDropdownVisible"
+        class="dropdown-list"
+      >
+        <li
+          v-for="crypto in cryptoList"
+          :key="crypto.id"
+          @mousedown.prevent="selectCrypto(crypto)"
+          class="dropdown-item"
+        >
           {{ crypto.name }}
         </li>
       </ul>
     </div>
-    <div v-if="selectedCrypto && selectedCrypto.name" class="crypto-table">
-      <h2>Інформація про валюту</h2>
+    <div v-if="searchedCryptos.length" class="crypto-table">
+      <h2 class="crypto-table-title">Інформація про криптовалюти</h2>
       <table>
         <thead>
           <tr>
-            <th>Назва</th>
-            <th>Ціна (USD)</th>
-            <th>Зміна за 24г</th>
-            <th>Обсяг торгів</th>
-            <th>Ринкова капіталізація</th>
+            <th>Name</th>
+            <th>Price (USD)</th>
+            <th>Change for 24h</th>
+            <th>Value</th>
+            <th>Market capitalization</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>{{ selectedCrypto.name }}</td>
-            <td>${{ selectedCrypto.value }}</td>
-            <td>{{ selectedCrypto.change }}%</td>
-            <td>${{ selectedCrypto.trading_volume }}</td>
-            <td>${{ selectedCrypto.market_cap }}</td>
+          <tr v-for="crypto in searchedCryptos" :key="crypto.name">
+            <td>{{ crypto.name }}</td>
+            <td>${{ crypto.value }}</td>
+            <td :class="{ positive: crypto.change > 0, negative: crypto.change < 0 }">
+              {{ crypto.change }}%
+            </td>
+            <td>${{ crypto.trading_volume }}</td>
+            <td>${{ crypto.market_cap }}</td>
           </tr>
         </tbody>
       </table>
+    </div>
+    <div v-if="error" class="error-message">
+      {{ error }}
     </div>
   </div>
 </template>
@@ -99,7 +114,9 @@ export default {
     return {
       searchQuery: "",
       cryptoList: [],
-      selectedCrypto: null,
+      searchedCryptos: [], // Список для збереження історії
+      error: null,
+      isDropdownVisible: false,
     };
   },
   methods: {
@@ -121,9 +138,13 @@ export default {
 
       try {
         const data = await fetchCryptoData(this.searchQuery.toLowerCase());
-        this.selectedCrypto = data;
+        // Додаємо нову криптовалюту в історію на початок списку, якщо її ще немає
+        if (!this.searchedCryptos.some((crypto) => crypto.name === data.name)) {
+          this.searchedCryptos.unshift(data); // Додаємо новий запис на початок
+        }
+        this.error = null;
       } catch (error) {
-        console.error("Не вдалося отримати дані про криптовалюту:", error);
+        this.error = "Не вдалося отримати дані про криптовалюту.";
       }
     },
     async selectCrypto(crypto) {
@@ -131,19 +152,18 @@ export default {
       this.cryptoList = [];
       await this.fetchSelectedCrypto();
     },
+    hideDropdown() {
+      setTimeout(() => (this.isDropdownVisible = false), 100); // Затримка, щоб уникнути закриття при виборі елемента.
+    },
   },
 };
 </script>
 
 <style>
-#app {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-}
-
 header {
   text-align: center;
   margin-bottom: 20px;
+  color: #ffc107; /* Жовтий для заголовка */
 }
 
 .search-bar {
@@ -152,24 +172,30 @@ header {
   align-items: center;
   margin-bottom: 20px;
   position: relative;
+  background-color: #333; /* Темний фон пошукової панелі */
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .search-bar input {
   width: 300px;
   padding: 10px;
-  border: 2px solid #333;
+  border: 2px solid #ffc107; /* Жовта обводка */
   border-radius: 5px 0 0 5px;
   outline: none;
   font-size: 16px;
+  color: #fff; /* Білий текст */
+  background-color: #555; /* Темний фон поля вводу */
 }
 
 .search-bar button {
   padding: 10px 20px;
-  background-color: #ffc107;
+  background-color: #ffc107; /* Жовта кнопка */
   border: none;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
   font-size: 16px;
+  color: #333; /* Темний текст на кнопці */
 }
 
 .dropdown-list {
@@ -180,7 +206,7 @@ header {
   max-height: 150px;
   overflow-y: auto;
   border: 1px solid #ccc;
-  background-color: #fff;
+  background-color: #333; /* Темний фон випадаючого списку */
   list-style: none;
   margin: 0;
   padding: 0;
@@ -190,10 +216,11 @@ header {
 .dropdown-list li {
   padding: 8px;
   cursor: pointer;
+  color: #fff; /* Білий текст в списку */
 }
 
 .dropdown-list li:hover {
-  background-color: #f0f0f0;
+  background-color: #444; /* Легке затемнення при наведенні */
 }
 
 .crypto-table {
@@ -202,23 +229,36 @@ header {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+  background-color: #333; /* Темний фон таблиці */
+  color: #fff; /* Білий текст в таблиці */
+  border-radius: 10px;
+}
+
+.crypto-table-title {
+  text-align: center;
+  color: #ffc107; /* Жовтий колір для заголовка */
+  margin-bottom: 10px;
 }
 
 .crypto-table table {
   width: 100%;
   border: 1px solid #333;
   border-radius: 5px;
-  background-color: #fff;
 }
 
-.crypto-table th, .crypto-table td {
+.crypto-table th,
+.crypto-table td {
   padding: 10px;
   text-align: center;
   border: 1px solid #333;
 }
 
 .crypto-table th {
-  background-color: #ffc107;
-  color: #333;
+  background-color: #ffc107; /* Жовтий для заголовків */
+  color: #333; /* Темний текст для заголовків */
+}
+
+.crypto-table td {
+  background-color: #444; /* Темний фон для клітинок */
 }
 </style>
